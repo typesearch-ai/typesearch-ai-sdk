@@ -8,8 +8,10 @@ import * as aiTest from 'ai/test';
 import { findSimilar, getContents, newsSearch } from '../src/index.ts';
 import { FakeApi, KEY } from './fake-api.ts';
 
-// MockLanguageModelV4 es de ai 7; con ai 6 (también soportado) estas dos pruebas se saltean.
-const MockLanguageModelV4 = (aiTest as Partial<typeof aiTest>).MockLanguageModelV4 as typeof aiTest.MockLanguageModelV4;
+// MockLanguageModelV4 es de ai 7; con ai 6 (también soportado) estas dos pruebas se saltean. El tipo cae
+// en el MockLanguageModelV3 de ai 6 para que el archivo compile con las dos versiones.
+type MockV4 = typeof aiTest extends { MockLanguageModelV4: infer M } ? M : typeof aiTest.MockLanguageModelV3;
+const MockLanguageModelV4 = (aiTest as { MockLanguageModelV4?: MockV4 }).MockLanguageModelV4 as MockV4;
 const withV4 = test.skipIf(!MockLanguageModelV4);
 
 let api: FakeApi;

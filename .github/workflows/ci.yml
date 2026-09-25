@@ -25,7 +25,8 @@ jobs:
         with:
           node-version: ${{ matrix.node }}
           cache: npm
-      - run: npm ci
+      # typesearch-js: from npm once it is there; until then, its public repository built next to this one.
+      - run: bash .github/scripts/install.sh
       - if: matrix.ai == 6
         run: npm install --no-save ai@6
       - run: npm run lint
@@ -42,7 +43,8 @@ jobs:
         with:
           node-version: 24
           cache: npm
-      - run: npm ci
+      # typesearch-js: from npm once it is there; until then, its public repository built next to this one.
+      - run: bash .github/scripts/install.sh
       - run: npm run build
       - run: npm pack --dry-run
       # ESM and CommonJS types resolve right in every TypeScript mode (node10, node16, bundler).

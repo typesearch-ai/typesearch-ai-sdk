@@ -7,9 +7,9 @@ import { checkMaxResults, countries, days, excludeDomains, includeDomains, langu
 
 export interface NewsSearchConfig extends TypesearchConfig {
   /**
-   * How much is read before ranking: `fast` (default, the cheapest and quickest: headlines and
-   * standfirsts), `ultra` (headlines only, same price), `normal` (also reads the best matches) or `deep`
-   * (reads more and finds the topic in other words too). See https://typesearch.ai/docs/modes.
+   * How much is read before ranking: `fast` (default: headlines and standfirsts, about a second),
+   * `ultra` (headlines only, the cheapest), `normal` (also reads the best matches) or `deep` (reads more
+   * and finds the topic in other words too). See https://typesearch.ai/docs/modes.
    */
   mode?: Mode;
   /** Results per search, 1 to 50. Defaults to 10. */
