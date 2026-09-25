@@ -93,7 +93,7 @@ export function newsSearch(config: NewsSearchConfig = {}): Tool<NewsSearchInput,
     inputSchema: z.object(shape) as unknown as z.ZodType<NewsSearchInput>,
     execute: async (input, { abortSignal }) => {
       const dated = input.days !== undefined || input.published_after !== undefined || input.published_before !== undefined;
-      const options: SearchOptions & { countries?: string[]; languages?: string[] } = {
+      const options: SearchOptions = {
         mode,
         max_results: maxResults,
         ...(input.days !== undefined ? { days: input.days } : !dated && config.days !== undefined ? { days: config.days } : {}),

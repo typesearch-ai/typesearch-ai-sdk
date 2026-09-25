@@ -14,6 +14,10 @@ export interface FindSimilarConfig extends TypesearchConfig {
   maxResults?: number;
   /** The window when the model asks for none: the last N days (1–365). The API's default is 7. */
   days?: number;
+  /** Only coverage from sources in these countries (ISO 3166-1 alpha-2). Set here, not by the model. */
+  countries?: string[];
+  /** Only coverage from sources in these languages (ISO 639-1). Set here, not by the model. */
+  languages?: string[];
   /** Replaces the tool description the model reads. */
   description?: string;
 }
@@ -37,7 +41,17 @@ export function findSimilar(config: FindSimilarConfig = {}): Tool<FindSimilarInp
     execute: async (input, { abortSignal }) => {
       const windowDays = input.days ?? config.days;
       const res = await call(client, (c) =>
-        c.similar(input.url, { mode: config.mode ?? 'fast', max_results: maxResults, ...(windowDays !== undefined ? { days: windowDays } : {}) }, { signal: abortSignal }),
+        c.similar(
+          input.url,
+          {
+            mode: config.mode ?? 'fast',
+            max_results: maxResults,
+            ...(windowDays !== undefined ? { days: windowDays } : {}),
+            ...(config.countries?.length ? { countries: config.countries } : {}),
+            ...(config.languages?.length ? { languages: config.languages } : {}),
+          },
+          { signal: abortSignal },
+        ),
       );
       return findSimilarOutput(res);
     },

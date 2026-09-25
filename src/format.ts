@@ -105,10 +105,7 @@ const count = (n: number, one: string, many: string) => `${n} ${n === 1 ? one : 
 const cost = (s: { cost_usd: number; cached?: true }) => (s.cached ? 'cached, free' : `US$${s.cost_usd.toFixed(4)}`);
 const utc = (iso: string) => iso.replace('T', ' ').replace('Z', ' UTC');
 
-// El país y el idioma de la fuente llegan con la API que filtra por país e idioma; el SDK todavía no los tipa.
-type WithPlace = Result & { country?: string | null; language?: string | null };
-
-function compactResult(r: WithPlace): CompactResult {
+function compactResult(r: Result): CompactResult {
   return compact<CompactResult>({
     title: r.title,
     url: r.url,

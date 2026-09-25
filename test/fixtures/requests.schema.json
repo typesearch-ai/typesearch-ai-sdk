@@ -131,7 +131,7 @@
      },
      "mode": {
       "default": "normal",
-      "description": "ultra: headlines only · fast: headlines and standfirsts (these two cost the least, the same) · normal: reads the best matches · deep: more headlines, the topic also in other words (synonyms and acronyms), twice the reading, snippets and the essentials of each article, and the search of the sites that cover the topic when the index falls short.",
+      "description": "ultra: headlines only, the cheapest · fast: headlines and standfirsts · normal: reads the best matches · deep: more headlines, the topic also in other words (synonyms and acronyms), twice the reading, snippets and the essentials of each article, and the search of the sites that cover the topic when the index falls short.",
       "type": "string",
       "enum": [
        "ultra",
@@ -502,7 +502,7 @@
      },
      "mode": {
       "default": "normal",
-      "description": "ultra: headlines only · fast: headlines and standfirsts (these two cost the least, the same) · normal: reads the best matches · deep: more headlines, the topic also in other words (synonyms and acronyms), twice the reading, snippets and the essentials of each article, and the search of the sites that cover the topic when the index falls short.",
+      "description": "ultra: headlines only, the cheapest · fast: headlines and standfirsts · normal: reads the best matches · deep: more headlines, the topic also in other words (synonyms and acronyms), twice the reading, snippets and the essentials of each article, and the search of the sites that cover the topic when the index falls short.",
       "type": "string",
       "enum": [
        "ultra",

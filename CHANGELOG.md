@@ -13,6 +13,7 @@ First release.
   sends the data instead).
 - Filters fixed in the config (`countries`, `languages`, `includeDomains`, `excludeDomains`) are always
   applied and hidden from the model.
+- `findSimilar()` takes `countries` and `languages` in its config, never from the model.
 - The client is created on the first call: defining the tools never fails without a key.
 - API errors reach the model as readable tool errors, with the `typesearch-js` error as `cause`.
 - ESM and CommonJS, fully typed.

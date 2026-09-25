@@ -283,6 +283,13 @@ describe('findSimilar', () => {
     expect(api.last.body.days).toBe(2);
   });
 
+  test('countries and languages are set by the developer, never offered to the model', async () => {
+    const t = findSimilar({ ...cfg(), countries: ['AR', 'UY'], languages: ['es'] });
+    expect(props(t).names).toEqual(['url', 'days']);
+    await run(t, { url: 'https://diarioejemplo.example/economia/nota-1' });
+    expect(api.last.body).toEqual({ url: 'https://diarioejemplo.example/economia/nota-1', mode: 'fast', max_results: 10, countries: ['AR', 'UY'], languages: ['es'] });
+  });
+
   test('no similar articles: results stays, empty', async () => {
     api.next({ status: 200, body: searchResponse({ object: 'similar', found: false, total: 0, results: [], reference: null }) });
     const t = findSimilar(cfg());

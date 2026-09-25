@@ -74,7 +74,8 @@ Every tool takes:
 
 A filter you set in the config is always applied and is no longer offered to the model, so it cannot widen
 it; the description tells the model about it. `findSimilar()` also takes `mode` (`'fast'` or `'deep'`),
-`maxResults` and `days`.
+`maxResults`, `days`, and `countries` · `languages` to keep the coverage it finds to some sources (set only
+in the config: the model never sees them).
 
 ```ts
 // News from Argentina and Chile, in Spanish, reading the best matches.
