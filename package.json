@@ -1,0 +1,83 @@
+{
+  "name": "@typesearch/ai-sdk",
+  "version": "0.1.0",
+  "description": "News search tools for the Vercel AI SDK: newsSearch, getContents and findSimilar, backed by typesearch, with a calibrated relevance score on every result.",
+  "keywords": [
+    "ai",
+    "ai-sdk",
+    "vercel",
+    "tools",
+    "agents",
+    "typesearch",
+    "news",
+    "news-api",
+    "search",
+    "llm"
+  ],
+  "homepage": "https://typesearch.ai/docs/integrations/vercel-ai-sdk",
+  "bugs": "https://github.com/typesearch-ai/typesearch-ai-sdk/issues",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/typesearch-ai/typesearch-ai-sdk.git"
+  },
+  "license": "MIT",
+  "author": "typesearch (https://typesearch.ai)",
+  "type": "module",
+  "main": "./dist/cjs/index.js",
+  "module": "./dist/esm/index.js",
+  "types": "./dist/esm/index.d.ts",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/esm/index.d.ts",
+        "default": "./dist/esm/index.js"
+      },
+      "require": {
+        "types": "./dist/cjs/index.d.ts",
+        "default": "./dist/cjs/index.js"
+      }
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "CHANGELOG.md",
+    "LICENSE"
+  ],
+  "sideEffects": false,
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "build": "rm -rf dist && tsc -p tsconfig.build.json && tsc -p tsconfig.cjs.json && node scripts/cjs.mjs",
+    "typecheck": "tsc --noEmit",
+    "lint": "npm run typecheck",
+    "test": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "test:live": "TYPESEARCH_LIVE=1 vitest run test/live.test.ts",
+    "smoke": "node test/smoke/esm.mjs && node test/smoke/cjs.cjs",
+    "prepublishOnly": "node scripts/check-publishable.mjs && npm run lint && npm test && npm run build && npm run smoke"
+  },
+  "dependencies": {
+    "typesearch-js": "file:../typesearch-js"
+  },
+  "peerDependencies": {
+    "ai": "^6.0.0 || ^7.0.0",
+    "zod": "^3.25.76 || ^4.1.8"
+  },
+  "devDependencies": {
+    "@types/node": "^22.18.0",
+    "@vitest/coverage-v8": "^3.2.4",
+    "ai": "^7.0.114",
+    "ajv": "^8.17.1",
+    "ajv-formats": "^3.0.1",
+    "typescript": "^5.9.3",
+    "vitest": "^3.2.4",
+    "zod": "^4.1.8"
+  },
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  }
+}

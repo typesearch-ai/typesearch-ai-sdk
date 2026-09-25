@@ -1,0 +1,802 @@
+{
+ "$comment": "Request schemas of POST /v1/search, /v1/similar and /v1/contents, from the typesearch OpenAPI (with countries and languages). Used by the fake API in the tests.",
+ "components": {
+  "schemas": {
+   "SearchRequest": {
+    "type": "object",
+    "properties": {
+     "query": {
+      "anyOf": [
+       {
+        "type": "string",
+        "minLength": 2,
+        "maxLength": 200
+       },
+       {
+        "minItems": 1,
+        "maxItems": 5,
+        "type": "array",
+        "items": {
+         "type": "string",
+         "minLength": 2,
+         "maxLength": 200
+        }
+       }
+      ],
+      "description": "One query, or up to 5 judged together."
+     },
+     "sources": {
+      "description": "Only these index sources, by domain, such as example.com. GET /v1/sources?domain=… tells you whether a domain is covered.",
+      "minItems": 1,
+      "maxItems": 100,
+      "type": "array",
+      "items": {
+       "type": "string",
+       "minLength": 1,
+       "maxLength": 200
+      }
+     },
+     "include_domains": {
+      "description": "Only these domains or paths. A domain includes its subdomains.",
+      "maxItems": 20,
+      "type": "array",
+      "items": {
+       "type": "string",
+       "maxLength": 200,
+       "pattern": "^(https?:\\/\\/)?(\\*\\.)?[\\w-]+(\\.[\\w-]+)+(\\/\\S*)?$"
+      }
+     },
+     "exclude_domains": {
+      "description": "Never these domains or paths.",
+      "maxItems": 20,
+      "type": "array",
+      "items": {
+       "type": "string",
+       "maxLength": 200,
+       "pattern": "^(https?:\\/\\/)?(\\*\\.)?[\\w-]+(\\.[\\w-]+)+(\\/\\S*)?$"
+      }
+     },
+     "countries": {
+      "description": "Only sources from these countries: ISO 3166-1 alpha-2 codes, such as AR or US. GET /v1/sources tells how many sources each country has.",
+      "minItems": 1,
+      "maxItems": 50,
+      "type": "array",
+      "items": {
+       "type": "string",
+       "maxLength": 20
+      }
+     },
+     "languages": {
+      "description": "Only sources that publish in these languages: ISO 639-1 codes, such as es or en (a BCP 47 tag such as pt-BR counts as pt).",
+      "minItems": 1,
+      "maxItems": 20,
+      "type": "array",
+      "items": {
+       "type": "string",
+       "maxLength": 35
+      }
+     },
+     "sections": {
+      "description": "Only these sections: the section in the feed, or the start of the URL path.",
+      "maxItems": 20,
+      "type": "array",
+      "items": {
+       "type": "string",
+       "minLength": 1,
+       "maxLength": 60
+      }
+     },
+     "days": {
+      "description": "The last N days; null for the whole index. Defaults to 7 unless dates are given.",
+      "anyOf": [
+       {
+        "type": "integer",
+        "minimum": 1,
+        "maximum": 365
+       },
+       {
+        "type": "null"
+       }
+      ]
+     },
+     "published_after": {
+      "description": "Published on or after this date. A bare date is read in Argentina time (UTC−3).",
+      "anyOf": [
+       {
+        "type": "string",
+        "format": "date",
+        "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+       },
+       {
+        "type": "string",
+        "format": "date-time",
+        "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+       }
+      ]
+     },
+     "published_before": {
+      "description": "Published on or before this date; a bare date includes that whole day.",
+      "anyOf": [
+       {
+        "type": "string",
+        "format": "date",
+        "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+       },
+       {
+        "type": "string",
+        "format": "date-time",
+        "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+       }
+      ]
+     },
+     "mode": {
+      "default": "normal",
+      "description": "ultra: headlines only · fast: headlines and standfirsts (these two cost the least, the same) · normal: reads the best matches · deep: more headlines, the topic also in other words (synonyms and acronyms), twice the reading, snippets and the essentials of each article, and the search of the sites that cover the topic when the index falls short.",
+      "type": "string",
+      "enum": [
+       "ultra",
+       "fast",
+       "normal",
+       "deep"
+      ]
+     },
+     "max_results": {
+      "default": 10,
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 50
+     },
+     "highlights": {
+      "description": "Very short verbatim excerpts (up to 25 words, never from the first paragraph) from the articles that were read: one per article, two in deep mode. On by default only in deep mode.",
+      "type": "boolean"
+     },
+     "dedupe": {
+      "default": false,
+      "description": "Groups the same story reported by several outlets.",
+      "type": "boolean"
+     },
+     "tone": {
+      "default": false,
+      "description": "Tone toward the query: positive, neutral or negative.",
+      "type": "boolean"
+     },
+     "essential": {
+      "description": "The essentials: very short verbatim excerpts across several articles. On by default only in deep mode.",
+      "type": "boolean"
+     },
+     "questions": {
+      "default": {},
+      "description": "Structured output: typed questions (boolean, choice, score) that the model answers for each result.",
+      "type": "object",
+      "propertyNames": {
+       "type": "string",
+       "pattern": "^[\\w-]{1,40}$"
+      },
+      "additionalProperties": {
+       "oneOf": [
+        {
+         "type": "object",
+         "properties": {
+          "type": {
+           "type": "string",
+           "const": "boolean"
+          },
+          "instructions": {
+           "anyOf": [
+            {
+             "type": "string"
+            },
+            {
+             "type": "object",
+             "propertyNames": {
+              "type": "string"
+             },
+             "additionalProperties": {
+              "$ref": "#/components/schemas/SearchRequest___schema0"
+             }
+            },
+            {
+             "type": "array",
+             "items": {
+              "$ref": "#/components/schemas/SearchRequest___schema0"
+             }
+            }
+           ]
+          },
+          "criteria": {
+           "type": "object",
+           "properties": {
+            "true": {
+             "type": "string"
+            },
+            "false": {
+             "type": "string"
+            }
+           }
+          }
+         },
+         "required": [
+          "type",
+          "instructions"
+         ]
+        },
+        {
+         "type": "object",
+         "properties": {
+          "type": {
+           "type": "string",
+           "const": "choice"
+          },
+          "instructions": {
+           "anyOf": [
+            {
+             "type": "string"
+            },
+            {
+             "type": "object",
+             "propertyNames": {
+              "type": "string"
+             },
+             "additionalProperties": {
+              "$ref": "#/components/schemas/SearchRequest___schema0"
+             }
+            },
+            {
+             "type": "array",
+             "items": {
+              "$ref": "#/components/schemas/SearchRequest___schema0"
+             }
+            }
+           ]
+          },
+          "criteria": {
+           "type": "object",
+           "propertyNames": {
+            "type": "string"
+           },
+           "additionalProperties": {
+            "type": [
+             "string",
+             "null"
+            ]
+           }
+          }
+         },
+         "required": [
+          "type",
+          "instructions",
+          "criteria"
+         ]
+        },
+        {
+         "type": "object",
+         "properties": {
+          "type": {
+           "type": "string",
+           "const": "score"
+          },
+          "instructions": {
+           "anyOf": [
+            {
+             "type": "string"
+            },
+            {
+             "type": "object",
+             "propertyNames": {
+              "type": "string"
+             },
+             "additionalProperties": {
+              "$ref": "#/components/schemas/SearchRequest___schema0"
+             }
+            },
+            {
+             "type": "array",
+             "items": {
+              "$ref": "#/components/schemas/SearchRequest___schema0"
+             }
+            }
+           ]
+          },
+          "criteria": {
+           "minItems": 2,
+           "type": "array",
+           "items": {
+            "type": "string"
+           }
+          }
+         },
+         "required": [
+          "type",
+          "instructions",
+          "criteria"
+         ]
+        }
+       ]
+      }
+     },
+     "max_tokens": {
+      "default": null,
+      "description": "Cap on model tokens. If it is reached, the response comes back with incomplete: true.",
+      "anyOf": [
+       {
+        "type": "integer",
+        "minimum": 2000,
+        "maximum": 9007199254740991
+       },
+       {
+        "type": "null"
+       }
+      ]
+     },
+     "fresh": {
+      "default": false,
+      "description": "Skips the result cache (10 minutes).",
+      "type": "boolean"
+     },
+     "temporal": {
+      "default": "auto",
+      "description": "auto: a date in the query («today», «yesterday», «tomorrow», «on September 22», «this week») is taken out of the topic, sets the publication window (unless published_after/before are given; days only bounds it) and puts the results from that day first · off: the query is taken literally.",
+      "type": "string",
+      "enum": [
+       "auto",
+       "off"
+      ]
+     },
+     "timezone": {
+      "description": "IANA time zone that decides what day «today» is. Defaults to Argentina (America/Argentina/Buenos_Aires).",
+      "type": "string"
+     },
+     "stream": {
+      "default": false,
+      "description": "Server-sent events while it searches: step, partial, result.",
+      "type": "boolean"
+     }
+    },
+    "required": [
+     "query"
+    ],
+    "additionalProperties": false
+   },
+   "SearchRequest___schema0": {
+    "anyOf": [
+     {
+      "type": "string"
+     },
+     {
+      "type": "number"
+     },
+     {
+      "type": "boolean"
+     },
+     {
+      "type": "null"
+     },
+     {
+      "type": "array",
+      "items": {
+       "$ref": "#/components/schemas/SearchRequest___schema0"
+      }
+     },
+     {
+      "type": "object",
+      "propertyNames": {
+       "type": "string"
+      },
+      "additionalProperties": {
+       "$ref": "#/components/schemas/SearchRequest___schema0"
+      }
+     }
+    ]
+   },
+   "SimilarRequest": {
+    "type": "object",
+    "properties": {
+     "url": {
+      "type": "string",
+      "maxLength": 2000,
+      "format": "uri"
+     },
+     "sources": {
+      "description": "Only these index sources, by domain, such as example.com. GET /v1/sources?domain=… tells you whether a domain is covered.",
+      "minItems": 1,
+      "maxItems": 100,
+      "type": "array",
+      "items": {
+       "type": "string",
+       "minLength": 1,
+       "maxLength": 200
+      }
+     },
+     "include_domains": {
+      "description": "Only these domains or paths. A domain includes its subdomains.",
+      "maxItems": 20,
+      "type": "array",
+      "items": {
+       "type": "string",
+       "maxLength": 200,
+       "pattern": "^(https?:\\/\\/)?(\\*\\.)?[\\w-]+(\\.[\\w-]+)+(\\/\\S*)?$"
+      }
+     },
+     "exclude_domains": {
+      "description": "Never these domains or paths.",
+      "maxItems": 20,
+      "type": "array",
+      "items": {
+       "type": "string",
+       "maxLength": 200,
+       "pattern": "^(https?:\\/\\/)?(\\*\\.)?[\\w-]+(\\.[\\w-]+)+(\\/\\S*)?$"
+      }
+     },
+     "countries": {
+      "description": "Only sources from these countries: ISO 3166-1 alpha-2 codes, such as AR or US. GET /v1/sources tells how many sources each country has.",
+      "minItems": 1,
+      "maxItems": 50,
+      "type": "array",
+      "items": {
+       "type": "string",
+       "maxLength": 20
+      }
+     },
+     "languages": {
+      "description": "Only sources that publish in these languages: ISO 639-1 codes, such as es or en (a BCP 47 tag such as pt-BR counts as pt).",
+      "minItems": 1,
+      "maxItems": 20,
+      "type": "array",
+      "items": {
+       "type": "string",
+       "maxLength": 35
+      }
+     },
+     "sections": {
+      "description": "Only these sections: the section in the feed, or the start of the URL path.",
+      "maxItems": 20,
+      "type": "array",
+      "items": {
+       "type": "string",
+       "minLength": 1,
+       "maxLength": 60
+      }
+     },
+     "days": {
+      "description": "The last N days; null for the whole index. Defaults to 7 unless dates are given.",
+      "anyOf": [
+       {
+        "type": "integer",
+        "minimum": 1,
+        "maximum": 365
+       },
+       {
+        "type": "null"
+       }
+      ]
+     },
+     "published_after": {
+      "description": "Published on or after this date. A bare date is read in Argentina time (UTC−3).",
+      "anyOf": [
+       {
+        "type": "string",
+        "format": "date",
+        "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+       },
+       {
+        "type": "string",
+        "format": "date-time",
+        "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+       }
+      ]
+     },
+     "published_before": {
+      "description": "Published on or before this date; a bare date includes that whole day.",
+      "anyOf": [
+       {
+        "type": "string",
+        "format": "date",
+        "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+       },
+       {
+        "type": "string",
+        "format": "date-time",
+        "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+       }
+      ]
+     },
+     "mode": {
+      "default": "normal",
+      "description": "ultra: headlines only · fast: headlines and standfirsts (these two cost the least, the same) · normal: reads the best matches · deep: more headlines, the topic also in other words (synonyms and acronyms), twice the reading, snippets and the essentials of each article, and the search of the sites that cover the topic when the index falls short.",
+      "type": "string",
+      "enum": [
+       "ultra",
+       "fast",
+       "normal",
+       "deep"
+      ]
+     },
+     "max_results": {
+      "default": 10,
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 50
+     },
+     "highlights": {
+      "description": "Very short verbatim excerpts (up to 25 words, never from the first paragraph) from the articles that were read: one per article, two in deep mode. On by default only in deep mode.",
+      "type": "boolean"
+     },
+     "dedupe": {
+      "default": false,
+      "description": "Groups the same story reported by several outlets.",
+      "type": "boolean"
+     },
+     "tone": {
+      "default": false,
+      "description": "Tone toward the query: positive, neutral or negative.",
+      "type": "boolean"
+     },
+     "essential": {
+      "description": "The essentials: very short verbatim excerpts across several articles. On by default only in deep mode.",
+      "type": "boolean"
+     },
+     "questions": {
+      "default": {},
+      "description": "Structured output: typed questions (boolean, choice, score) that the model answers for each result.",
+      "type": "object",
+      "propertyNames": {
+       "type": "string",
+       "pattern": "^[\\w-]{1,40}$"
+      },
+      "additionalProperties": {
+       "oneOf": [
+        {
+         "type": "object",
+         "properties": {
+          "type": {
+           "type": "string",
+           "const": "boolean"
+          },
+          "instructions": {
+           "anyOf": [
+            {
+             "type": "string"
+            },
+            {
+             "type": "object",
+             "propertyNames": {
+              "type": "string"
+             },
+             "additionalProperties": {
+              "$ref": "#/components/schemas/SimilarRequest___schema0"
+             }
+            },
+            {
+             "type": "array",
+             "items": {
+              "$ref": "#/components/schemas/SimilarRequest___schema0"
+             }
+            }
+           ]
+          },
+          "criteria": {
+           "type": "object",
+           "properties": {
+            "true": {
+             "type": "string"
+            },
+            "false": {
+             "type": "string"
+            }
+           }
+          }
+         },
+         "required": [
+          "type",
+          "instructions"
+         ]
+        },
+        {
+         "type": "object",
+         "properties": {
+          "type": {
+           "type": "string",
+           "const": "choice"
+          },
+          "instructions": {
+           "anyOf": [
+            {
+             "type": "string"
+            },
+            {
+             "type": "object",
+             "propertyNames": {
+              "type": "string"
+             },
+             "additionalProperties": {
+              "$ref": "#/components/schemas/SimilarRequest___schema0"
+             }
+            },
+            {
+             "type": "array",
+             "items": {
+              "$ref": "#/components/schemas/SimilarRequest___schema0"
+             }
+            }
+           ]
+          },
+          "criteria": {
+           "type": "object",
+           "propertyNames": {
+            "type": "string"
+           },
+           "additionalProperties": {
+            "type": [
+             "string",
+             "null"
+            ]
+           }
+          }
+         },
+         "required": [
+          "type",
+          "instructions",
+          "criteria"
+         ]
+        },
+        {
+         "type": "object",
+         "properties": {
+          "type": {
+           "type": "string",
+           "const": "score"
+          },
+          "instructions": {
+           "anyOf": [
+            {
+             "type": "string"
+            },
+            {
+             "type": "object",
+             "propertyNames": {
+              "type": "string"
+             },
+             "additionalProperties": {
+              "$ref": "#/components/schemas/SimilarRequest___schema0"
+             }
+            },
+            {
+             "type": "array",
+             "items": {
+              "$ref": "#/components/schemas/SimilarRequest___schema0"
+             }
+            }
+           ]
+          },
+          "criteria": {
+           "minItems": 2,
+           "type": "array",
+           "items": {
+            "type": "string"
+           }
+          }
+         },
+         "required": [
+          "type",
+          "instructions",
+          "criteria"
+         ]
+        }
+       ]
+      }
+     },
+     "max_tokens": {
+      "default": null,
+      "description": "Cap on model tokens. If it is reached, the response comes back with incomplete: true.",
+      "anyOf": [
+       {
+        "type": "integer",
+        "minimum": 2000,
+        "maximum": 9007199254740991
+       },
+       {
+        "type": "null"
+       }
+      ]
+     },
+     "fresh": {
+      "default": false,
+      "description": "Skips the result cache (10 minutes).",
+      "type": "boolean"
+     },
+     "temporal": {
+      "default": "auto",
+      "description": "auto: a date in the query («today», «yesterday», «tomorrow», «on September 22», «this week») is taken out of the topic, sets the publication window (unless published_after/before are given; days only bounds it) and puts the results from that day first · off: the query is taken literally.",
+      "type": "string",
+      "enum": [
+       "auto",
+       "off"
+      ]
+     },
+     "timezone": {
+      "description": "IANA time zone that decides what day «today» is. Defaults to Argentina (America/Argentina/Buenos_Aires).",
+      "type": "string"
+     }
+    },
+    "required": [
+     "url"
+    ],
+    "additionalProperties": false
+   },
+   "SimilarRequest___schema0": {
+    "anyOf": [
+     {
+      "type": "string"
+     },
+     {
+      "type": "number"
+     },
+     {
+      "type": "boolean"
+     },
+     {
+      "type": "null"
+     },
+     {
+      "type": "array",
+      "items": {
+       "$ref": "#/components/schemas/SimilarRequest___schema0"
+      }
+     },
+     {
+      "type": "object",
+      "propertyNames": {
+       "type": "string"
+      },
+      "additionalProperties": {
+       "$ref": "#/components/schemas/SimilarRequest___schema0"
+      }
+     }
+    ]
+   },
+   "ContentsRequest": {
+    "type": "object",
+    "properties": {
+     "urls": {
+      "minItems": 1,
+      "maxItems": 10,
+      "type": "array",
+      "items": {
+       "type": "string",
+       "maxLength": 2000,
+       "format": "uri"
+      }
+     },
+     "query": {
+      "description": "With a query, the model picks the excerpt about it and says how much each article covers it.",
+      "type": "string",
+      "minLength": 2,
+      "maxLength": 200
+     },
+     "highlights": {
+      "default": true,
+      "type": "boolean"
+     },
+     "max_tokens": {
+      "default": null,
+      "description": "Cap on model tokens. If it is reached, the response comes back with incomplete: true.",
+      "anyOf": [
+       {
+        "type": "integer",
+        "minimum": 2000,
+        "maximum": 9007199254740991
+       },
+       {
+        "type": "null"
+       }
+      ]
+     }
+    },
+    "required": [
+     "urls"
+    ],
+    "additionalProperties": false
+   }
+  }
+ }
+}

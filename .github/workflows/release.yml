@@ -1,0 +1,41 @@
+# Publishes to npm when a GitHub release is published (tag v<version>), with provenance.
+#
+# Trusted publishing (OIDC): no token is stored once the package exists on npm and this repository and
+# workflow are its trusted publisher (see PUBLICAR.md in the working repository). The very first publish
+# needs an npm token in the NPM_TOKEN secret of the `npm` environment; delete it afterwards.
+name: Release
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write # OIDC for trusted publishing and provenance
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    environment: npm
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          registry-url: https://registry.npmjs.org
+          package-manager-cache: false
+      # Trusted publishing needs npm 11.5.1 or later.
+      - run: npm install -g npm@latest
+      - run: npm ci
+      - name: The tag matches package.json, and no dependency points to a local folder
+        run: |
+          if [ "$GITHUB_EVENT_NAME" = release ]; then test "v$(node -p "require('./package.json').version")" = "$GITHUB_REF_NAME"; fi
+          node scripts/check-publishable.mjs
+      - run: npm run lint
+      - run: npm test
+      - run: npm run build
+      - run: npm run smoke
+      - run: npm publish --provenance --access public --ignore-scripts
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
