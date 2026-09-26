@@ -26,7 +26,7 @@
       "description": "One query, or up to 5 judged together."
      },
      "sources": {
-      "description": "Only these index sources, by domain, such as example.com. GET /v1/sources?domain=… tells you whether a domain is covered.",
+      "description": "Only these index sources, by domain, such as example.com. A domain that is not in the index comes back as a domain_not_indexed warning.",
       "minItems": 1,
       "maxItems": 100,
       "type": "array",
@@ -57,7 +57,7 @@
       }
      },
      "countries": {
-      "description": "Only sources from these countries: ISO 3166-1 alpha-2 codes, such as AR or US. GET /v1/sources tells how many sources each country has.",
+      "description": "Only sources from these countries: ISO 3166-1 alpha-2 codes, such as AR or US.",
       "minItems": 1,
       "maxItems": 50,
       "type": "array",
@@ -397,7 +397,7 @@
       "format": "uri"
      },
      "sources": {
-      "description": "Only these index sources, by domain, such as example.com. GET /v1/sources?domain=… tells you whether a domain is covered.",
+      "description": "Only these index sources, by domain, such as example.com. A domain that is not in the index comes back as a domain_not_indexed warning.",
       "minItems": 1,
       "maxItems": 100,
       "type": "array",
@@ -428,7 +428,7 @@
       }
      },
      "countries": {
-      "description": "Only sources from these countries: ISO 3166-1 alpha-2 codes, such as AR or US. GET /v1/sources tells how many sources each country has.",
+      "description": "Only sources from these countries: ISO 3166-1 alpha-2 codes, such as AR or US.",
       "minItems": 1,
       "maxItems": 50,
       "type": "array",

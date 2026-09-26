@@ -129,7 +129,7 @@ import { createMCPClient } from '@ai-sdk/mcp';
 const mcp = await createMCPClient({
   transport: { type: 'http', url: 'https://api.typesearch.ai/mcp', headers: { Authorization: `Bearer ${process.env.TYPESEARCH_API_KEY}` } },
 });
-const tools = await mcp.tools(); // search_news, get_contents, find_similar, check_coverage
+const tools = await mcp.tools(); // search_news, get_contents, find_similar
 ```
 
 This package needs no MCP connection, lets you fix filters per tool and gives your code typed output.
